@@ -8,6 +8,7 @@ class Car {
   maxSpeed: number;
   angle: number;
   friction: number;
+  sensor: Sensor;
   controls: Controls;
 
   constructor(x: number, y: number, width: number, height: number) {
@@ -17,16 +18,18 @@ class Car {
     this.height = height;
 
     this.speed = 0;
-    this.acceleration = 0.2;
-    this.maxSpeed = 3;
+    this.acceleration = 0.4;
+    this.maxSpeed = 5;
     this.angle = 0;
     this.friction = 0.05;
 
+    this.sensor = new Sensor(this);
     this.controls = new Controls();
   }
 
   update() {
     this.#move();
+    this.sensor.update();
   }
 
   #move() {
@@ -81,5 +84,7 @@ class Car {
     ctx.fill();
 
     ctx.restore();
+
+    this.sensor.draw(ctx);
   }
 }
