@@ -6,7 +6,7 @@ class Road {
   right: number;
   top: number;
   bottom: number;
-  borders: { x: number; y: number }[][];
+  borders: Quadrilateral;
 
   constructor(x: number, width: number, laneCount = 3) {
     this.x = x;

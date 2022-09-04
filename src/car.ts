@@ -27,9 +27,9 @@ class Car {
     this.controls = new Controls();
   }
 
-  update() {
+  update(roadBorders: Quadrilateral) {
     this.#move();
-    this.sensor.update();
+    this.sensor.update(roadBorders);
   }
 
   #move() {
