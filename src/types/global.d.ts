@@ -6,7 +6,7 @@ declare global {
     y: number;
   };
 
-  export type CoordinateOffset = Coordiante & { offset: number };
+  export type CoordinateOffset = Coordinate & { offset: number };
 
   export type Maybe<T> = T | null | undefined;
 

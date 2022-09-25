@@ -32,6 +32,18 @@ class Car {
     this.sensor.update(roadBorders);
   }
 
+  #createPolygon() {
+    const points: Coordinate[] = [];
+    const radius = Math.hypot(this.width, this.height) / 2;
+    const alpha = Math.atan2(this.width, this.height);
+
+    points.push({
+      // top-right corder
+      x: this.x - Math.sin(this.angle - alpha) * radius,
+      y: this.y - Math.cos(this.angle - alpha) * radius,
+    });
+  }
+
   #move() {
     // direction
     if (this.controls.forward) {

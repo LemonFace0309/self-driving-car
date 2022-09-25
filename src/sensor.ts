@@ -75,7 +75,8 @@ class Sensor {
     for (let i = 0; i < this.rayCount; i++) {
       let end = this.rays[i][1];
       if (this.readings[i]) {
-        end = this.readings[i];
+        this.readings[i];
+        end = this.readings[i] as CoordinateOffset;
       }
 
       ctx.beginPath();
