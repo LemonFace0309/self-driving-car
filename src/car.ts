@@ -8,6 +8,8 @@ class Car {
   maxSpeed: number;
   angle: number;
   friction: number;
+  damaged: boolean;
+  polygon?: Coordinate[];
   sensor: Sensor;
   controls: Controls;
 
@@ -22,26 +24,19 @@ class Car {
     this.maxSpeed = 5;
     this.angle = 0;
     this.friction = 0.05;
+    this.damaged = false;
 
     this.sensor = new Sensor(this);
     this.controls = new Controls();
   }
 
   update(roadBorders: Quadrilateral) {
-    this.#move();
+    if (!this.damaged) {
+      this.#move();
+      this.polygon = this.#createPolygon();
+      this.damaged = this.#assessDamage(roadBorders);
+    }
     this.sensor.update(roadBorders);
-  }
-
-  #createPolygon() {
-    const points: Coordinate[] = [];
-    const radius = Math.hypot(this.width, this.height) / 2;
-    const alpha = Math.atan2(this.width, this.height);
-
-    points.push({
-      // top-right corder
-      x: this.x - Math.sin(this.angle - alpha) * radius,
-      y: this.y - Math.cos(this.angle - alpha) * radius,
-    });
   }
 
   #move() {
@@ -84,18 +79,61 @@ class Car {
     this.y -= Math.cos(this.angle) * this.speed;
   }
 
-  draw(ctx: CanvasRenderingContext2D | null) {
-    if (!ctx) return;
+  #createPolygon() {
+    const points: Coordinate[] = [];
+    const radius = Math.hypot(this.width, this.height) / 2;
+    const alpha = Math.atan2(this.width, this.height);
 
-    ctx.save();
-    ctx.translate(this.x, this.y);
-    ctx.rotate(-this.angle);
+    // top-right corner
+    points.push({
+      x: this.x - Math.sin(this.angle - alpha) * radius,
+      y: this.y - Math.cos(this.angle - alpha) * radius,
+    });
+    // top-left corner
+    points.push({
+      x: this.x - Math.sin(this.angle + alpha) * radius,
+      y: this.y - Math.cos(this.angle + alpha) * radius,
+    });
+    // bottom-left corner
+    points.push({
+      x: this.x - Math.sin(Math.PI + this.angle - alpha) * radius,
+      y: this.y - Math.cos(Math.PI + this.angle - alpha) * radius,
+    });
+    // bottom-right corner
+    points.push({
+      x: this.x - Math.sin(Math.PI + this.angle + alpha) * radius,
+      y: this.y - Math.cos(Math.PI + this.angle + alpha) * radius,
+    });
+    return points;
+  }
+
+  #assessDamage(roadBorders: Quadrilateral) {
+    if (!this.polygon) return false;
+
+    for (let i = 0; i < roadBorders.length; i++) {
+      if (polysIntersect(this.polygon, roadBorders[i])) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  draw(ctx: CanvasRenderingContext2D | null) {
+    if (!ctx || !this.polygon) return;
+
+    if (this.damaged) {
+      ctx.fillStyle = "gray";
+    } else {
+      ctx.fillStyle = "black";
+    }
 
     ctx.beginPath();
-    ctx.rect(-this.width / 2, -this.height / 2, this.width, this.height);
-    ctx.fill();
+    ctx.moveTo(this.polygon[0].x, this.polygon[0].y);
 
-    ctx.restore();
+    for (let i = 0; i < this.polygon.length; i++) {
+      ctx.lineTo(this.polygon[i].x, this.polygon[i].y);
+    }
+    ctx.fill();
 
     this.sensor.draw(ctx);
   }
