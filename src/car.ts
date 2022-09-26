@@ -39,14 +39,14 @@ class Car {
     this.controls = new Controls(controlType);
   }
 
-  update(roadBorders: Quadrilateral) {
+  update(roadBorders: Quadrilateral, traffic: Car[]) {
     if (!this.damaged) {
       this.#move();
       this.polygon = this.#createPolygon();
-      this.damaged = this.#assessDamage(roadBorders);
+      this.damaged = this.#assessDamage(roadBorders, traffic);
     }
     if (this.sensor) {
-      this.sensor.update(roadBorders);
+      this.sensor.update(roadBorders, traffic);
     }
   }
 
@@ -118,7 +118,7 @@ class Car {
     return points;
   }
 
-  #assessDamage(roadBorders: Quadrilateral) {
+  #assessDamage(roadBorders: Quadrilateral, traffic: Car[]) {
     if (!this.polygon) return false;
 
     for (let i = 0; i < roadBorders.length; i++) {
@@ -126,16 +126,22 @@ class Car {
         return true;
       }
     }
+
+    for (let i = 0; i < traffic.length; i++) {
+      if (polysIntersect(this.polygon, traffic[i].polygon as Coordinate[])) {
+        return true;
+      }
+    }
     return false;
   }
 
-  draw(ctx: CanvasRenderingContext2D | null) {
+  draw(ctx: CanvasRenderingContext2D | null, colour = "black") {
     if (!ctx || !this.polygon) return;
 
     if (this.damaged) {
       ctx.fillStyle = "gray";
     } else {
-      ctx.fillStyle = "black";
+      ctx.fillStyle = colour;
     }
 
     ctx.beginPath();
