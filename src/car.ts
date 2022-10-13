@@ -11,6 +11,8 @@ class Car {
   damaged: boolean;
   polygon?: Coordinate[];
   sensor?: Sensor;
+  brain?: NeuralNetwork;
+  useBrain: boolean;
   controls: Controls;
 
   constructor(
@@ -18,7 +20,7 @@ class Car {
     y: number,
     width: number,
     height: number,
-    controlType: "KEYS" | "DUMMY",
+    controlType: "AI" | "KEYS" | "DUMMY",
     maxSpeed = 5
   ) {
     this.x = x;
@@ -33,8 +35,11 @@ class Car {
     this.friction = 0.05;
     this.damaged = false;
 
+    this.useBrain = controlType == "AI";
+
     if (controlType != "DUMMY") {
       this.sensor = new Sensor(this);
+      this.brain = new NeuralNetwork([this.sensor.rayCount, 6, 4]);
     }
     this.controls = new Controls(controlType);
   }
@@ -47,6 +52,20 @@ class Car {
     }
     if (this.sensor) {
       this.sensor.update(roadBorders, traffic);
+      if (this.brain) {
+        // low values if object is far away, high values is object is near sensor
+        const offsets = this.sensor.readings.map((s) =>
+          s == null ? 0 : 1 - s.offset
+        );
+        const outputs = NeuralNetwork.feedForwrd(offsets, this.brain);
+
+        if (this.useBrain) {
+          this.controls.forward = Boolean(outputs[0]);
+          this.controls.left = Boolean(outputs[1]);
+          this.controls.right = Boolean(outputs[2]);
+          this.controls.reverse = Boolean(outputs[3]);
+        }
+      }
     }
   }
 

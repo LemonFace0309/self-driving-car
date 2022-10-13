@@ -4,7 +4,7 @@ class Controls {
   right: boolean;
   reverse: boolean;
 
-  constructor(type: "KEYS" | "DUMMY") {
+  constructor(type: "AI" | "KEYS" | "DUMMY") {
     this.forward = false;
     this.left = false;
     this.right = false;
