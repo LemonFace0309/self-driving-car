@@ -13,7 +13,7 @@ const networkCtx = networkCanvas.getContext("2d");
 
 const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 
-const cars = generateCars(100);
+const cars = generateCars(500);
 let bestCar = cars[0];
 const bestBrain = localStorage.getItem("bestBrain");
 if (bestBrain) {
@@ -22,7 +22,7 @@ if (bestBrain) {
 
     const brain = cars[i].brain;
     if (i != 0 && brain) {
-      NeuralNetwork.mutate(brain, 0.1);
+      NeuralNetwork.mutate(brain, 0.05);
     }
   }
 }
@@ -35,7 +35,7 @@ const traffic = [...Array(100)].map(
       30,
       50,
       "DUMMY",
-      Math.floor(Math.random() * 4) + 1
+      Math.floor(Math.random() * 3) + 1
     )
 );
 // const traffic = [
@@ -43,6 +43,11 @@ const traffic = [...Array(100)].map(
 //   new Car(road.getLaneCenter(0), -300, 30, 50, "DUMMY", 3),
 //   new Car(road.getLaneCenter(2), -300, 30, 50, "DUMMY", 3),
 //   new Car(road.getLaneCenter(1), -600, 30, 50, "DUMMY", 3),
+//   new Car(road.getLaneCenter(0), -800, 30, 50, "DUMMY", 3),
+//   new Car(road.getLaneCenter(1), -800, 30, 50, "DUMMY", 3),
+//   new Car(road.getLaneCenter(1), -1000, 30, 50, "DUMMY", 3),
+//   new Car(road.getLaneCenter(2), -1000, 30, 50, "DUMMY", 3),
+//   new Car(road.getLaneCenter(1), -1300, 30, 50, "DUMMY", 3),
 // ];
 
 animate();
