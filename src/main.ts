@@ -17,10 +17,33 @@ const cars = generateCars(100);
 let bestCar = cars[0];
 const bestBrain = localStorage.getItem("bestBrain");
 if (bestBrain) {
-  bestCar.brain = JSON.parse(bestBrain);
+  for (let i = 0; i < cars.length; i++) {
+    cars[i].brain = JSON.parse(bestBrain);
+
+    const brain = cars[i].brain;
+    if (i != 0 && brain) {
+      NeuralNetwork.mutate(brain, 0.1);
+    }
+  }
 }
 
-const traffic = [new Car(road.getLaneCenter(1), -11, 30, 50, "DUMMY", 3)];
+const traffic = [...Array(100)].map(
+  (_, i) =>
+    new Car(
+      road.getLaneCenter(Math.floor(Math.random() * 3)),
+      -200 * (i + Math.floor(Math.random() * 3)),
+      30,
+      50,
+      "DUMMY",
+      Math.floor(Math.random() * 4) + 1
+    )
+);
+// const traffic = [
+//   new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 3),
+//   new Car(road.getLaneCenter(0), -300, 30, 50, "DUMMY", 3),
+//   new Car(road.getLaneCenter(2), -300, 30, 50, "DUMMY", 3),
+//   new Car(road.getLaneCenter(1), -600, 30, 50, "DUMMY", 3),
+// ];
 
 animate();
 

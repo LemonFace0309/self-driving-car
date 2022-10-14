@@ -1,3 +1,4 @@
+// short for linear interpolation
 function lerp(A: number, B: number, t: number) {
   return A + (B - A) * t;
 }
@@ -42,6 +43,10 @@ function polysIntersect(poly1: Coordinate[], poly2: Coordinate[]) {
     }
   }
   return false;
+}
+
+function randomNodeValue() {
+  return Math.random() * 2 - 1;
 }
 
 function getRGBA(value: number) {

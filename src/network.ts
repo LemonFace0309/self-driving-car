@@ -17,6 +17,23 @@ class NeuralNetwork {
 
     return outputs;
   }
+
+  static mutate(network: NeuralNetwork, amount = 1) {
+    network.levels.forEach((level) => {
+      for (let i = 0; i < level.biases.length; i++) {
+        level.biases[i] = lerp(level.biases[i], randomNodeValue(), amount);
+      }
+      for (let i = 0; i < level.weights.length; i++) {
+        for (let j = 0; j < level.weights[i].length; j++) {
+          level.weights[i][j] = lerp(
+            level.weights[i][j],
+            randomNodeValue(),
+            amount
+          );
+        }
+      }
+    });
+  }
 }
 
 class Level {
@@ -43,13 +60,13 @@ class Level {
     for (let i = 0; i < level.inputs.length; i++) {
       for (let j = 0; j < level.outputs.length; j++) {
         // create value between -1 and 1
-        level.weights[i][j] = Math.random() * 2 - 1;
+        level.weights[i][j] = randomNodeValue();
       }
     }
 
     for (let i = 0; i < level.biases.length; i++) {
       // create value between -1 and 1
-      level.biases[i] = Math.random() * 2 - 1;
+      level.biases[i] = randomNodeValue();
     }
   }
 
