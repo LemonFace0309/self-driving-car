@@ -154,7 +154,11 @@ class Car {
     return false;
   }
 
-  draw(ctx: CanvasRenderingContext2D | null, colour = "black") {
+  draw(
+    ctx: CanvasRenderingContext2D | null,
+    colour = "black",
+    drawSensor = false
+  ) {
     if (!ctx || !this.polygon) return;
 
     if (this.damaged) {
@@ -171,7 +175,7 @@ class Car {
     }
     ctx.fill();
 
-    if (this.sensor) {
+    if (this.sensor && drawSensor) {
       this.sensor.draw(ctx);
     }
   }
